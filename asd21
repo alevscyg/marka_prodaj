@@ -1,0 +1,80 @@
+async WidgetAmoCrm(queryParams:any){
+    const {name, email, phone} = queryParams;
+    let Contacts = await this.GetAmoCrm()
+    let count =0
+    for(let q=0;q<Contacts._embedded.contacts.length;q++){
+      if((Contacts._embedded.contacts[q].custom_fields_values[0].values[0].value===queryParams.phone)||(Contacts._embedded.contacts[q].custom_fields_values[1].values[0].value===queryParams.email)){
+        count+=1
+        let UpdateAmoCrm = [{
+          id: Contacts._embedded.contacts[q].id,
+          name:queryParams.name,
+          custom_fields_values: [
+            {
+              field_id: 1479211,
+              field_name: "Телефон",
+              values: [
+                {
+                  value: queryParams.phone,
+                  enum_code: "WORK"
+                }
+              ]
+            },
+            {
+              field_id: 1479213,
+              field_name: "Email",
+              values: [
+                {
+                  value: queryParams.email,
+                  enum_code: "WORK"
+                }
+              ]
+            }
+
+          ]
+        }]
+        let postAmoCrm = await fetch('https://aleksandrsmolencev216.amocrm.ru/api/v4/contacts', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjFiYjUxNDY5Zjk1MmZhNWM0MjU1NTgzNzU4NTNmMmY4ODMyMTNhZDhiYzdlNjdhNmFmZTkxYTliMjNlMzgzYmY3YTNjMDkwZDFkOTk3MzljIn0.eyJhdWQiOiJjNTAzNTZkZS1lZGIxLTRiOTgtYjlhNS1jZDI1MWE0YjU5YmQiLCJqdGkiOiIxYmI1MTQ2OWY5NTJmYTVjNDI1NTU4Mzc1ODUzZjJmODgzMjEzYWQ4YmM3ZTY3YTZhZmU5MWE5YjIzZTM4M2JmN2EzYzA5MGQxZDk5NzM5YyIsImlhdCI6MTcwMDY1MjQ1MywibmJmIjoxNzAwNjUyNDUzLCJleHAiOjE3MDA3Mzg4NTMsInN1YiI6IjEwMzY0MTI2IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMxNDE4NTcwLCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJwdXNoX25vdGlmaWNhdGlvbnMiLCJmaWxlcyIsImNybSIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiXX0.jDinqFR_G6pcEhAmVl8WydyPjQ0XfqvLwwYzGA5uP8ZXnzKQl1d63LtvqSwdSOatixABz95grvLzg6ae1bq02LE8R8n7ryJ35IuvIZRQAEYrQbpAk3u_5um_ynxRU0hclm0AN3BTmdNYK0kn_-Qicw2BZ3pdlHbiIfh1a-nEX9hoHi0AdNi9mI6Xf5yUOl83Y5TVy9g-o3YxcGk9pTpu5acmEP2HnF6SAx2-neduI21jIDsTc8pGqyMAZI3y74mWPue6QO8CHZ_d5scf7XJ9vdOaPi8NtBbFBm0_0kIo_OArmfEuBdiRQDXZmkH695AmCogePLXVniAjhIxSbuaCkA"
+        },
+        body: JSON.stringify(UpdateAmoCrm),
+      });
+      return postAmoCrm.json()
+      }
+    }
+    if(count==0){
+      let postAmoCrm = await fetch('https://aleksandrsmolencev216.amocrm.ru/api/v4/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjFiYjUxNDY5Zjk1MmZhNWM0MjU1NTgzNzU4NTNmMmY4ODMyMTNhZDhiYzdlNjdhNmFmZTkxYTliMjNlMzgzYmY3YTNjMDkwZDFkOTk3MzljIn0.eyJhdWQiOiJjNTAzNTZkZS1lZGIxLTRiOTgtYjlhNS1jZDI1MWE0YjU5YmQiLCJqdGkiOiIxYmI1MTQ2OWY5NTJmYTVjNDI1NTU4Mzc1ODUzZjJmODgzMjEzYWQ4YmM3ZTY3YTZhZmU5MWE5YjIzZTM4M2JmN2EzYzA5MGQxZDk5NzM5YyIsImlhdCI6MTcwMDY1MjQ1MywibmJmIjoxNzAwNjUyNDUzLCJleHAiOjE3MDA3Mzg4NTMsInN1YiI6IjEwMzY0MTI2IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMxNDE4NTcwLCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJwdXNoX25vdGlmaWNhdGlvbnMiLCJmaWxlcyIsImNybSIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiXX0.jDinqFR_G6pcEhAmVl8WydyPjQ0XfqvLwwYzGA5uP8ZXnzKQl1d63LtvqSwdSOatixABz95grvLzg6ae1bq02LE8R8n7ryJ35IuvIZRQAEYrQbpAk3u_5um_ynxRU0hclm0AN3BTmdNYK0kn_-Qicw2BZ3pdlHbiIfh1a-nEX9hoHi0AdNi9mI6Xf5yUOl83Y5TVy9g-o3YxcGk9pTpu5acmEP2HnF6SAx2-neduI21jIDsTc8pGqyMAZI3y74mWPue6QO8CHZ_d5scf7XJ9vdOaPi8NtBbFBm0_0kIo_OArmfEuBdiRQDXZmkH695AmCogePLXVniAjhIxSbuaCkA"
+      },
+      body: JSON.stringify([
+        {
+            name: queryParams.name,
+            custom_fields_values: [
+                {
+                    field_id: 1479211,
+                    values: [
+                        {
+                            value: queryParams.phone
+                        }
+                    ]
+                },
+                {
+                    field_id: 1479213,
+                    values: [
+                        {
+                            value: queryParams.email
+                        }
+                    ]
+                }
+            ]
+        }
+    ]),
+    });
+    return postAmoCrm.json()
+    }
+    
+  }
